@@ -1,6 +1,6 @@
-#! /vendor/bin/sh
+#!/vendor/bin/sh
 
-# Copyright (c) 2009-2016, The Linux Foundation. All rights reserved.
+# Copyright (c) 2012-2013,2016,2018 The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -27,35 +27,10 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-echo 1 > /proc/sys/net/ipv6/conf/default/accept_ra_defrtr
-
-if [ -f /vendor/bin/msm_irqbalance ]; then
-        start vendor.msm_irqbalance
-fi
-
-#
-# Make modem config folder and copy firmware config to that folder for RIL
-#
-if [ -f /data/vendor/modem_config/ver_info.txt ]; then
-    prev_version_info=`cat /data/vendor/modem_config/ver_info.txt`
+boot_reason=`cat /proc/sys/kernel/boot_reason`
+reboot_reason=`getprop ro.boot.alarmboot`
+if [ "$boot_reason" = "3" ] || [ "$reboot_reason" = "true" ]; then
+    setprop ro.vendor.alarm_boot true
 else
-    prev_version_info=""
+    setprop ro.vendor.alarm_boot false
 fi
-
-cur_version_info=`cat /vendor/firmware_mnt/verinfo/ver_info.txt`
-if [ ! -f /vendor/firmware_mnt/verinfo/ver_info.txt -o "$prev_version_info" != "$cur_version_info" ]; then
-    # add W for group recursively before delete
-    chmod g+w -R /data/vendor/modem_config/*
-    rm -rf /data/vendor/modem_config/*
-    # preserve the read only mode for all subdir and files
-    cp --preserve=m -dr /vendor/firmware_mnt/image/modem_pr/mcfg/configs/* /data/vendor/modem_config
-    cp --preserve=m -d /vendor/firmware_mnt/verinfo/ver_info.txt /data/vendor/modem_config/
-    cp --preserve=m -d /vendor/firmware_mnt/image/modem_pr/mbn_ota.txt /data/vendor/modem_config/
-    # the group must be root, otherwise this script could not add "W" for group recursively
-    chown -hR radio.root /data/vendor/modem_config/*
-fi
-chmod g-w /data/vendor/modem_config
-setprop ro.vendor.ril.mbn_copy_completed 1
-
-#set default loglevel to KERN_WARNING
-echo "4 4 1 4" > /proc/sys/kernel/printk

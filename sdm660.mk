@@ -296,13 +296,14 @@ PRODUCT_PACKAGES += \
     init.goodix.sh \
     init.msm.usb.configfs.rc \
     init.qcom.post_boot.sh \
+    init.qcom.early_boot.sh \
     init.qcom.rc \
     init.qcom.sh \
     init.qcom.usb.rc \
     init.qcom.usb.sh \
     init.recovery.qcom.rc \
     init.target.rc \
-    init.xiaomi_parts.rc \
+    init.performance.sdm660.rc \
     ueventd.qcom.rc
 
 # FM
@@ -312,7 +313,7 @@ PRODUCT_PACKAGES += \
     libqcomfm_jni \
     qcom.fmradio \
     qcom.fmradio.xml
-    
+
 PRODUCT_BOOT_JARS += \
     qcom.fmradio
 endif

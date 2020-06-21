@@ -28,6 +28,7 @@
 import /vendor/etc/init/hw/init.qcom.usb.rc
 import /vendor/etc/init/hw/init.msm.usb.configfs.rc
 import /vendor/etc/init/hw/init.target.rc
+import /vendor/etc/init/hw/init.performance.sdm660.rc
 import /vendor/etc/init/hw/init.device.rc
 import /vendor/etc/init/hw/init.xiaomi_parts.rc
 
@@ -83,7 +84,7 @@ on early-boot
     write /sys/kernel/boot_cdsp/boot 1
     write /sys/devices/virtual/npu/msm_npu/boot 1
     write /sys/kernel/boot_slpi/boot 1
-    setprop ro.alarm_boot false
+    exec u:r:qti_init_shell:s0 -- /vendor/bin/init.qcom.early_boot.sh
 
     # SSR Setup
     write /sys/bus/msm_subsys/devices/subsys0/restart_level RELATED
